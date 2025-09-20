@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Used Car Price Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 100px;
+            background: #f4f6f9;
+        }
+        h1 {
+            color: #333;
+        }
+        input {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #aaa;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 30px;
+            font-size: 20px;
+            color: #222;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Used Car Price Predictor (Linear Regression)</h1>
+
+    <form id="predictForm">
+        <input type="number" step="0.1" id="present_price" placeholder="Present Price (Lakhs)" required><br>
+        <input type="number" id="kms_driven" placeholder="Kms Driven" required><br>
+        <input type="number" id="owner" placeholder="Owner (0/1/2)" required><br>
+        <input type="number" id="year" placeholder="Manufacture Year" required><br>
+        <button type="submit">Predict Price</button>
+    </form>
+
+    <div class="result" id="result">Prediction will appear here</div>
+
+    <script>
+        // Simple linear regression coefficients (example)
+        const coef = {
+            intercept: 50000, // example intercept
+            Present_Price: 15000,
+            Kms_Driven: -0.05,
+            Owner: -10000,
+            Car_Age: -2000
+        };
+
+        document.getElementById('predictForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const present_price = parseFloat(document.getElementById('present_price').value);
+            const kms_driven = parseFloat(document.getElementById('kms_driven').value);
+            const owner = parseInt(document.getElementById('owner').value);
+            const year = parseInt(document.getElementById('year').value);
+
+            const car_age = 2025 - year;
+
+            let price = coef.intercept 
+                        + coef.Present_Price * present_price
+                        + coef.Kms_Driven * kms_driven
+                        + coef.Owner * owner
+                        + coef.Car_Age * car_age;
+
+            document.getElementById('result').innerText = "Predicted Selling Price: ₹" + price.toFixed(2);
+        });
+    </script>
+</body>
+</html>
