@@ -6,13 +6,13 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin-top: 100px;
+            margin-top: 50px;
             background: #f4f6f9;
         }
         h1 {
             color: #333;
         }
-        input {
+        input, select {
             padding: 10px;
             margin: 10px;
             border-radius: 5px;
@@ -45,19 +45,46 @@
         <input type="number" id="kms_driven" placeholder="Kms Driven" required><br>
         <input type="number" id="owner" placeholder="Owner (0/1/2)" required><br>
         <input type="number" id="year" placeholder="Manufacture Year" required><br>
+        <select id="fuel_type" required>
+            <option value="">Select Fuel Type</option>
+            <option value="Petrol">Petrol</option>
+            <option value="Diesel">Diesel</option>
+            <option value="CNG">CNG</option>
+        </select><br>
+        <select id="transmission" required>
+            <option value="">Select Transmission</option>
+            <option value="Manual">Manual</option>
+            <option value="Automatic">Automatic</option>
+        </select><br>
+        <select id="fitness_certificate" required>
+            <option value="">Fitness Certificate</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select><br>
+        <input type="text" id="variant" placeholder="Variant" required><br>
+        <select id="warranty_available" required>
+            <option value="">Warranty Available?</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select><br>
         <button type="submit">Predict Price</button>
     </form>
 
     <div class="result" id="result">Prediction will appear here</div>
 
     <script>
-        // Simple linear regression coefficients (example)
+        // Example linear regression coefficients
         const coef = {
             intercept: 50000, // example intercept
             Present_Price: 15000,
             Kms_Driven: -0.05,
             Owner: -10000,
-            Car_Age: -2000
+            Car_Age: -2000,
+            Fuel_Type: { Petrol: 5000, Diesel: 10000, CNG: 0 },
+            Transmission: { Manual: 0, Automatic: 5000 },
+            Fitness_Certificate: { Yes: 5000, No: 0 },
+            Variant: { "Standard": 2000, "Premium": 5000 }, // example mapping
+            Warranty_Available: { Yes: 7000, No: 0 } // example coefficient
         };
 
         document.getElementById('predictForm').addEventListener('submit', function(e) {
@@ -67,6 +94,11 @@
             const kms_driven = parseFloat(document.getElementById('kms_driven').value);
             const owner = parseInt(document.getElementById('owner').value);
             const year = parseInt(document.getElementById('year').value);
+            const fuel_type = document.getElementById('fuel_type').value;
+            const transmission = document.getElementById('transmission').value;
+            const fitness_certificate = document.getElementById('fitness_certificate').value;
+            const variant = document.getElementById('variant').value;
+            const warranty_available = document.getElementById('warranty_available').value;
 
             const car_age = 2025 - year;
 
@@ -74,7 +106,12 @@
                         + coef.Present_Price * present_price
                         + coef.Kms_Driven * kms_driven
                         + coef.Owner * owner
-                        + coef.Car_Age * car_age;
+                        + coef.Car_Age * car_age
+                        + (coef.Fuel_Type[fuel_type] || 0)
+                        + (coef.Transmission[transmission] || 0)
+                        + (coef.Fitness_Certificate[fitness_certificate] || 0)
+                        + (coef.Variant[variant] || 0)
+                        + (coef.Warranty_Available[warranty_available] || 0);
 
             document.getElementById('result').innerText = "Predicted Selling Price: ₹" + price.toFixed(2);
         });
